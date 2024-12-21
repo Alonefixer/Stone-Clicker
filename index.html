@@ -43,6 +43,20 @@
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       background-image: url('https://www.transparenttextures.com/patterns/stone-dirt.png');
       background-size: cover;
+      animation: stoneAnimation 2s infinite ease-in-out;
+    }
+
+    /* Пульсация камня */
+    @keyframes stoneAnimation {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.1);
+      }
+      100% {
+        transform: scale(1);
+      }
     }
 
     .stone:hover {
@@ -59,6 +73,19 @@
       letter-spacing: 2px;
       text-align: center;
       transition: color 0.3s ease;
+      animation: textAnimation 1s infinite alternate;
+    }
+
+    /* Мелькание текста */
+    @keyframes textAnimation {
+      0% {
+        color: #d4af37;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+      }
+      100% {
+        color: #f1c40f;
+        text-shadow: 0 0 15px #f1c40f, 0 0 30px #f1c40f, 0 0 50px #f1c40f;
+      }
     }
 
     /* Стили для счётчика */
@@ -69,16 +96,21 @@
       color: white;
       text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
       transition: transform 0.3s ease;
+      animation: counterAnimation 1s ease;
+    }
+
+    /* Анимация для счётчика */
+    @keyframes counterAnimation {
+      from {
+        transform: scale(1);
+      }
+      to {
+        transform: scale(1.1);
+      }
     }
 
     .counter:hover {
       transform: scale(1.2);
-    }
-
-    /* Анимация для текста */
-    .stone-text:hover {
-      color: #f1c40f;
-      text-shadow: 0 0 15px #f1c40f, 0 0 30px #f1c40f, 0 0 50px #f1c40f;
     }
 
     /* Стиль футера */
