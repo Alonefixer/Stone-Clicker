@@ -56,14 +56,13 @@
       }
     }
 
-    .stone:hover {
-      transform: scale(1.1);
-      box-shadow: 0 15px 60px rgba(0, 0, 0, 0.8);
+    .stone:active {
+      transform: scale(0.95); /* Эффект нажатия */
     }
 
     /* Счётчик кликов */
     .counter {
-      margin-top: 30px;
+      margin-top: 20px;
       font-size: 40px;
       font-weight: bold;
       color: white;
@@ -72,7 +71,7 @@
 
     /* Футер с подписью */
     .footer {
-      margin-top: 30px;
+      margin-top: 20px;
       font-size: 14px;
       color: #aaa;
       font-style: italic;
@@ -108,14 +107,17 @@
       .stone {
         width: 150px;
         height: 150px;
+        margin-bottom: 10px;
       }
 
       .counter {
         font-size: 28px;
+        margin-top: 15px;
       }
 
       .footer {
         font-size: 10px;
+        margin-top: 10px;
       }
     }
   </style>
@@ -156,6 +158,14 @@
 
     // Обработчик нажатия на камень
     stone.addEventListener('click', () => {
+      counter++; // Увеличиваем счётчик
+      counterDisplay.textContent = counter; // Обновляем отображение
+      localStorage.setItem('counter', counter); // Сохраняем значение
+    });
+
+    // Обработка для телефонов: включение кликов
+    stone.addEventListener('touchstart', (event) => {
+      event.preventDefault(); // Отключаем стандартное поведение
       counter++; // Увеличиваем счётчик
       counterDisplay.textContent = counter; // Обновляем отображение
       localStorage.setItem('counter', counter); // Сохраняем значение
