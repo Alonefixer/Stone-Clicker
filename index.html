@@ -3,171 +3,166 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Кликер камня</title>
+  <title>Stone Clicker</title>
   <style>
+    /* Основные стили для всей страницы */
     body {
+      background-color: #121212;
       margin: 0;
       padding: 0;
+      font-family: 'Arial', sans-serif;
+      color: white;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background: linear-gradient(135deg, #FF6F61, #D71C2A);
-      font-family: 'Arial', sans-serif;
-      color: white;
-      user-select: none;
       overflow: hidden;
+      user-select: none;
+      -webkit-user-select: none; /* Для Safari */
     }
 
+    /* Контейнер для контента */
     .container {
       text-align: center;
-      border-radius: 20px;
-      padding: 30px;
-      background-color: rgba(0, 0, 0, 0.7);
-      max-width: 400px;
-      width: 100%;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-      transition: all 0.3s ease-in-out;
+      max-width: 100%;
+      padding: 20px;
     }
 
-    #stone-platform {
-      background: inherit;
-      border-radius: 20px;
-      padding: 30px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
-    }
-
-    #stone {
-      cursor: pointer;
-      width: 180px;
-      height: 180px;
-      background: radial-gradient(circle, #5a5a5a 30%, #333333);
+    /* Стили для кнопки-кликера */
+    .stone {
+      width: 220px;
+      height: 220px;
+      background: #555;
       border-radius: 50%;
-      box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8), 0 0 50px rgba(0, 0, 0, 0.5);
-      position: relative;
-      margin-bottom: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
       display: flex;
       justify-content: center;
       align-items: center;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      background-image: url('https://www.transparenttextures.com/patterns/stone-dirt.png');
+      background-size: cover;
+    }
+
+    .stone:hover {
+      transform: scale(1.1);
+      box-shadow: 0 15px 60px rgba(0, 0, 0, 0.8);
+    }
+
+    /* Стили для текста на камне */
+    .stone-text {
+      font-size: 32px;
       font-weight: bold;
-      font-size: 24px;
+      color: #d4af37;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+      letter-spacing: 2px;
       text-align: center;
-      animation: stoneBounce 0.5s ease-out infinite alternate;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition: color 0.3s ease;
     }
 
-    /* Анимация подпрыгивания камня */
-    @keyframes stoneBounce {
-      0% {
-        transform: scale(1);
-      }
-      100% {
-        transform: scale(1.1);
-      }
-    }
-
-    /* Эффект при нажатии */
-    #stone:active {
-      animation: stoneClickEffect 0.3s ease-in-out;
-    }
-
-    @keyframes stoneClickEffect {
-      0% {
-        transform: scale(1.1);
-      }
-      100% {
-        transform: scale(1);
-      }
-    }
-
-    #counter {
+    /* Стили для счётчика */
+    .counter {
+      margin-top: 30px;
       font-size: 40px;
       font-weight: bold;
-      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
-      margin-top: 10px;
+      color: white;
+      text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
+      transition: transform 0.3s ease;
+    }
+
+    .counter:hover {
+      transform: scale(1.2);
+    }
+
+    /* Анимация для текста */
+    .stone-text:hover {
+      color: #f1c40f;
+      text-shadow: 0 0 15px #f1c40f, 0 0 30px #f1c40f, 0 0 50px #f1c40f;
+    }
+
+    /* Стиль футера */
+    .footer {
+      margin-top: 30px;
+      font-size: 14px;
+      color: #aaa;
+      font-style: italic;
       letter-spacing: 1px;
-      animation: counterFade 1s ease-in-out infinite alternate;
     }
 
-    /* Анимация мерцания счетчика */
-    @keyframes counterFade {
-      0% {
-        opacity: 1;
+    .footer a {
+      color: #aaa;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer a:hover {
+      color: #f1c40f;
+    }
+
+    /* Адаптивность для мобильных устройств */
+    @media (max-width: 600px) {
+      .stone {
+        width: 180px;
+        height: 180px;
       }
-      100% {
-        opacity: 0.6;
+
+      .stone-text {
+        font-size: 26px;
+      }
+
+      .counter {
+        font-size: 32px;
       }
     }
 
-    /* Стиль подсветки камня при наведении */
-    #stone:hover {
-      box-shadow: 0 0 60px rgba(255, 255, 255, 0.7);
-      transform: scale(1.1);
-    }
-
-    /* Стиль для мобильных устройств */
-    @media (max-width: 768px) {
-      #stone {
+    @media (max-width: 400px) {
+      .stone {
         width: 150px;
         height: 150px;
-        font-size: 20px;
       }
 
-      #counter {
-        font-size: 35px;
+      .stone-text {
+        font-size: 22px;
       }
 
-      .container {
-        padding: 20px;
+      .counter {
+        font-size: 28px;
       }
     }
   </style>
 </head>
 <body>
+
   <div class="container">
-    <div id="stone-platform">
-      <div id="stone">
-        Stone
-      </div>
-      <div id="counter">0</div>
+    <div class="stone" id="stone">
+      <div class="stone-text">Stone</div>
+    </div>
+    <div class="counter" id="counter">0</div>
+    <div class="footer">
+      By <a href="#">alone_fixer</a>
     </div>
   </div>
 
-  <audio id="click-sound" src="assets/sounds/Click.mp3" preload="auto"></audio>
-
   <script>
+    // Получаем сохраненное значение счётчика из localStorage
+    let counter = parseInt(localStorage.getItem('counter')) || 0;
+
+    // Обновляем отображение счётчика
+    const counterDisplay = document.getElementById('counter');
+    counterDisplay.textContent = counter;
+
     const stone = document.getElementById('stone');
-    const counterElement = document.getElementById('counter');
-    const clickSound = document.getElementById('click-sound');
 
-    // Загружаем счетчик из localStorage или устанавливаем на 0
-    let counter = localStorage.getItem('counter') ? parseInt(localStorage.getItem('counter')) : 0;
-
-    // Обновляем счетчик
-    function updateCounter() {
-      counterElement.textContent = counter;
-    }
-
-    // Функция для обработки клика
-    function handleClick() {
+    // Слушаем событие клика на камне
+    stone.addEventListener('click', () => {
       counter++;
-      updateCounter();
+      counterDisplay.textContent = counter;
+
+      // Сохраняем новое значение счётчика в localStorage
       localStorage.setItem('counter', counter);
-
-      // Воспроизведение звука при клике
-      clickSound.currentTime = 0;
-      clickSound.play();
-    }
-
-    // Клик на камень
-    stone.addEventListener('click', handleClick);
-
-    // Инициализация
-    updateCounter();
+    });
   </script>
+
 </body>
 </html>
