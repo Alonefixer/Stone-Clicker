@@ -59,7 +59,6 @@
       text-align: center;
       animation: stoneBounce 0.5s ease-out infinite alternate;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
-      background-size: 100% 100%;
     }
 
     /* Анимация подпрыгивания камня */
@@ -138,25 +137,25 @@
       counterElement.textContent = counter;
     }
 
-    // Минимальный интервал между кликами в миллисекундах
-    const clickInterval = 500; // 500ms = 0.5 секунды
-    let canClick = true; // Флаг, который контролирует, можно ли кликать
+    // Задержка перед увеличением счета
+    const clickDelay = 1000; // Задержка в 1 секунду (1000 миллисекунд)
+    let canClick = true; // Флаг для отслеживания состояния клика
 
-    // Функция для обработки клика
+    // Функция для обработки клика с задержкой
     function handleClick() {
       if (canClick) {
-        counter++;
-        updateCounter();
-        localStorage.setItem('counter', counter);
-
-        // Воспроизведение звука при клике
-        clickSound.currentTime = 0;
-        clickSound.play();
-
-        canClick = false; // Запрещаем клик до следующего интервала
+        canClick = false; // Отключаем возможность повторного клика
         setTimeout(() => {
-          canClick = true; // Разрешаем клик снова после интервала
-        }, clickInterval);
+          counter++;
+          updateCounter();
+          localStorage.setItem('counter', counter);
+          
+          // Воспроизведение звука при клике
+          clickSound.currentTime = 0;
+          clickSound.play();
+          
+          canClick = true; // Включаем возможность клика снова после задержки
+        }, clickDelay); // Задержка перед следующей возможностью клика
       }
     }
 
