@@ -7,7 +7,7 @@
   <style>
     /* Основные стили для всей страницы */
     body {
-      background-color: #121212;
+      background-color: #1d1d1d;
       margin: 0;
       padding: 0;
       font-family: 'Arial', sans-serif;
@@ -15,6 +15,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      flex-direction: column;
       height: 100vh;
       overflow: hidden;
       user-select: none;
@@ -26,13 +27,14 @@
       text-align: center;
       max-width: 100%;
       padding: 20px;
+      position: relative;
     }
 
-    /* Стили для кнопки-кликера */
+    /* Стили для кнопки-кликера (камень) */
     .stone {
       width: 220px;
       height: 220px;
-      background: #555;
+      background: transparent; /* Убираем фон */
       border-radius: 50%;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
       display: flex;
@@ -41,7 +43,7 @@
       position: relative;
       cursor: pointer;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
-      background-image: url('https://www.transparenttextures.com/patterns/stone-dirt.png');
+      background-image: url('assets/Stone.png'); /* Путь к изображению камня */
       background-size: cover;
       animation: stoneAnimation 2s infinite ease-in-out;
     }
@@ -62,30 +64,6 @@
     .stone:hover {
       transform: scale(1.1);
       box-shadow: 0 15px 60px rgba(0, 0, 0, 0.8);
-    }
-
-    /* Стили для текста на камне */
-    .stone-text {
-      font-size: 32px;
-      font-weight: bold;
-      color: #d4af37;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-      letter-spacing: 2px;
-      text-align: center;
-      transition: color 0.3s ease;
-      animation: textAnimation 1s infinite alternate;
-    }
-
-    /* Мелькание текста */
-    @keyframes textAnimation {
-      0% {
-        color: #d4af37;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-      }
-      100% {
-        color: #f1c40f;
-        text-shadow: 0 0 15px #f1c40f, 0 0 30px #f1c40f, 0 0 50px #f1c40f;
-      }
     }
 
     /* Стили для счётчика */
@@ -139,12 +117,12 @@
         height: 180px;
       }
 
-      .stone-text {
-        font-size: 26px;
-      }
-
       .counter {
         font-size: 32px;
+      }
+
+      .footer {
+        font-size: 12px;
       }
     }
 
@@ -154,12 +132,12 @@
         height: 150px;
       }
 
-      .stone-text {
-        font-size: 22px;
-      }
-
       .counter {
         font-size: 28px;
+      }
+
+      .footer {
+        font-size: 10px;
       }
     }
   </style>
@@ -167,17 +145,16 @@
 <body>
 
   <div class="container">
-    <div class="stone" id="stone">
-      <div class="stone-text">Stone</div>
-    </div>
+    <div class="stone" id="stone"></div>
     <div class="counter" id="counter">0</div>
+
     <div class="footer">
       By <a href="#">alone_fixer</a>
     </div>
   </div>
 
   <script>
-    // Получаем сохраненное значение счётчика из localStorage
+    // Получаем сохранённое значение счётчика из localStorage
     let counter = parseInt(localStorage.getItem('counter')) || 0;
 
     // Обновляем отображение счётчика
@@ -188,7 +165,7 @@
 
     // Слушаем событие клика на камне
     stone.addEventListener('click', () => {
-      counter++;
+      counter++; // Увеличиваем количество кликов на 1
       counterDisplay.textContent = counter;
 
       // Сохраняем новое значение счётчика в localStorage
