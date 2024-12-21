@@ -110,10 +110,44 @@
       transform: scale(1.05);
     }
 
+    /* Стиль для ПК */
+    .pc-message {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 24px;
+      color: white;
+      text-align: center;
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    /* Стиль для мобильных устройств */
+    @media (max-width: 768px) {
+      #stone {
+        width: 180px;
+        height: 180px;
+        font-size: 24px;
+      }
+
+      #counter {
+        font-size: 40px;
+      }
+
+      .container {
+        padding: 20px;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div id="pc-message" class="pc-message" style="display: none;">
+    Пожалуйста, играйте на мобильном устройстве!
+  </div>
+  
+  <div class="container" id="mobile-container">
     <div id="stone-platform">
       <div id="stone">
         Stone
@@ -128,6 +162,19 @@
     const stone = document.getElementById('stone');
     const counterElement = document.getElementById('counter');
     const clickSound = document.getElementById('click-sound');
+    const pcMessage = document.getElementById('pc-message');
+    const mobileContainer = document.getElementById('mobile-container');
+
+    // Функция для проверки устройства
+    function isMobile() {
+      return /Mobi|Android|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
+    }
+
+    // Если устройство не мобильное, показываем сообщение
+    if (!isMobile()) {
+      mobileContainer.style.display = 'none';
+      pcMessage.style.display = 'block';
+    }
 
     // Загружаем счетчик из localStorage или устанавливаем на 0
     let counter = localStorage.getItem('counter') ? parseInt(localStorage.getItem('counter')) : 0;
