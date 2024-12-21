@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Stone Clicker</title>
   <style>
-    /* Основные стили для всей страницы */
+    /* Основные стили для страницы */
     body {
       background-color: #1d1d1d;
       margin: 0;
@@ -19,36 +19,31 @@
       height: 100vh;
       overflow: hidden;
       user-select: none;
-      -webkit-user-select: none; /* Для Safari */
+      -webkit-user-select: none;
     }
 
-    /* Контейнер для контента */
+    /* Контейнер для камня и счётчика */
     .container {
       text-align: center;
       max-width: 100%;
       padding: 20px;
-      position: relative;
     }
 
     /* Стили для кнопки-кликера (камень) */
     .stone {
       width: 220px;
       height: 220px;
-      background: transparent; /* Убираем фон */
+      background-image: url('assets/Stone.png');
+      background-size: cover;
+      background-position: center;
       border-radius: 50%;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
       cursor: pointer;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
-      background-image: url('assets/Stone.png'); /* Путь к изображению камня */
-      background-size: cover;
       animation: stoneAnimation 2s infinite ease-in-out;
     }
 
-    /* Пульсация камня */
+    /* Эффект пульсации камня */
     @keyframes stoneAnimation {
       0% {
         transform: scale(1);
@@ -66,38 +61,21 @@
       box-shadow: 0 15px 60px rgba(0, 0, 0, 0.8);
     }
 
-    /* Стили для счётчика */
+    /* Счётчик кликов */
     .counter {
       margin-top: 30px;
       font-size: 40px;
       font-weight: bold;
       color: white;
       text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
-      transition: transform 0.3s ease;
-      animation: counterAnimation 1s ease;
     }
 
-    /* Анимация для счётчика */
-    @keyframes counterAnimation {
-      from {
-        transform: scale(1);
-      }
-      to {
-        transform: scale(1.1);
-      }
-    }
-
-    .counter:hover {
-      transform: scale(1.2);
-    }
-
-    /* Стиль футера */
+    /* Футер с подписью */
     .footer {
       margin-top: 30px;
       font-size: 14px;
       color: #aaa;
       font-style: italic;
-      letter-spacing: 1px;
     }
 
     .footer a {
@@ -143,18 +121,20 @@
   </style>
 </head>
 <body>
-
+  <!-- Основной контейнер -->
   <div class="container">
+    <!-- Камень -->
     <div class="stone" id="stone"></div>
+    <!-- Счётчик -->
     <div class="counter" id="counter">0</div>
-
+    <!-- Футер -->
     <div class="footer">
       By <a href="#">alone_fixer</a>
     </div>
   </div>
 
   <script>
-    // Отключение увеличения масштаба при двойном нажатии
+    // Предотвращаем масштабирование при двойном нажатии
     let lastTouchEnd = 0;
     document.addEventListener('touchend', (event) => {
       const now = new Date().getTime();
@@ -162,26 +142,24 @@
         event.preventDefault();
       }
       lastTouchEnd = now;
-    }, false);
+    });
 
-    // Получаем сохранённое значение счётчика из localStorage
+    // Получение счётчика из localStorage (или 0, если он не установлен)
     let counter = parseInt(localStorage.getItem('counter')) || 0;
 
-    // Обновляем отображение счётчика
+    // Элементы счётчика и камня
     const counterDisplay = document.getElementById('counter');
-    counterDisplay.textContent = counter;
-
     const stone = document.getElementById('stone');
 
-    // Слушаем событие клика на камне
-    stone.addEventListener('click', () => {
-      counter++; // Увеличиваем количество кликов на 1
-      counterDisplay.textContent = counter;
+    // Отображаем текущее значение счётчика
+    counterDisplay.textContent = counter;
 
-      // Сохраняем новое значение счётчика в localStorage
-      localStorage.setItem('counter', counter);
+    // Обработчик нажатия на камень
+    stone.addEventListener('click', () => {
+      counter++; // Увеличиваем счётчик
+      counterDisplay.textContent = counter; // Обновляем отображение
+      localStorage.setItem('counter', counter); // Сохраняем значение
     });
   </script>
-
 </body>
 </html>
