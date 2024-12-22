@@ -28,7 +28,7 @@
       justify-content: center;
       align-items: center;
       padding: 20px;
-      z-index: 2; /* Камень и счетчик будут перед снежинками */
+      z-index: 2;
     }
 
     /* Камень-кликер */
@@ -42,8 +42,8 @@
       box-shadow: 0 20px 60px rgba(255, 255, 255, 0.2), 0 0 25px rgba(255, 255, 255, 0.3);
       cursor: pointer;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
-      margin-bottom: 30px; /* Отступ снизу */
-      z-index: 2; /* Камень будет перед остальными элементами */
+      margin-bottom: 30px;
+      z-index: 2;
     }
 
     /* Счётчик кликов */
@@ -127,11 +127,20 @@
       }
     }
 
+    /* Стиль для сообщения */
+    .message {
+      font-size: 24px;
+      color: #f1c40f;
+      font-weight: bold;
+      padding: 20px;
+      background-color: rgba(0, 0, 0, 0.7);
+      border-radius: 10px;
+    }
   </style>
 </head>
 <body>
 
-  <div class="container">
+  <div class="container" id="container">
     <div class="stone" id="stone"></div>
     <div class="counter" id="counter">0</div>
     <div class="game-time" id="game-time">Время игры: 00:00:00</div>
@@ -140,7 +149,26 @@
     </div>
   </div>
 
+  <!-- Сообщение для ПК пользователей -->
+  <div class="message" id="message" style="display: none;">
+    Пожалуйста, зайдите с телефона для игры.
+  </div>
+
   <script>
+    // Проверка на устройство
+    function isMobile() {
+      return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    }
+
+    // Если пользователь на ПК, скрыть основной контент и показать сообщение
+    if (!isMobile()) {
+      document.getElementById('container').style.display = 'none';  // Скрываем основной контент
+      document.getElementById('message').style.display = 'block';  // Показываем сообщение
+    } else {
+      // Если мобильное устройство, показываем основной контент
+      document.getElementById('container').style.display = 'flex';
+    }
+
     let lastTouchEnd = 0;
     document.addEventListener('touchend', (event) => {
       const now = new Date().getTime();
