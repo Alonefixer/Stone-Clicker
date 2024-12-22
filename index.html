@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Stone Clicker</title>
   <style>
-    /* Основные стили для страницы */
+    /* Общий стиль страницы */
     body {
-      background-color: #1d1d1d;
+      background: radial-gradient(circle, #111, #000);
       margin: 0;
       padding: 0;
       font-family: 'Arial', sans-serif;
@@ -19,75 +19,76 @@
       height: 100vh;
       overflow: hidden;
       user-select: none;
-      -webkit-user-select: none;
-    }
-
-    /* Контейнер для камня и счётчика */
-    .container {
       text-align: center;
-      max-width: 100%;
-      padding: 20px;
     }
 
-    /* Стили для кнопки-кликера (камень) */
+    .container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      z-index: 2; /* Камень и счетчик будут перед снежинками */
+    }
+
+    /* Камень-кликер */
     .stone {
-      width: 220px;
-      height: 220px;
+      width: 200px;
+      height: 200px;
       background-image: url('assets/Stone.png');
       background-size: cover;
       background-position: center;
       border-radius: 50%;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 20px 60px rgba(255, 255, 255, 0.2), 0 0 25px rgba(255, 255, 255, 0.3);
       cursor: pointer;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
-      animation: stoneAnimation 2s infinite ease-in-out;
-    }
-
-    /* Эффект пульсации камня */
-    @keyframes stoneAnimation {
-      0% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.1);
-      }
-      100% {
-        transform: scale(1);
-      }
-    }
-
-    .stone:active {
-      transform: scale(0.95); /* Эффект нажатия */
+      margin-bottom: 30px; /* Отступ снизу */
+      z-index: 2; /* Камень будет перед остальными элементами */
     }
 
     /* Счётчик кликов */
     .counter {
-      margin-top: 20px;
-      font-size: 40px;
+      font-size: 50px;
       font-weight: bold;
-      color: white;
-      text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
+      color: #f1c40f;
+      text-shadow: 0px 5px 15px rgba(255, 215, 0, 0.8), 0 0 10px rgba(255, 255, 255, 0.5);
+      transition: transform 0.2s ease-in-out;
+      margin-top: 20px;
     }
 
-    /* Футер с подписью */
+    .counter:active {
+      transform: scale(1.1);
+    }
+
+    /* Время игры */
+    .game-time {
+      font-size: 24px;
+      color: #aaa;
+      margin-top: 10px;
+    }
+
+    /* Футер */
     .footer {
-      margin-top: 20px;
+      margin-top: 25px;
       font-size: 14px;
       color: #aaa;
       font-style: italic;
+      opacity: 0.8;
     }
 
     .footer a {
-      color: #aaa;
+      color: #f1c40f;
       text-decoration: none;
-      transition: color 0.3s ease;
+      font-weight: bold;
+      transition: color 0.3s ease, transform 0.3s ease;
     }
 
     .footer a:hover {
-      color: #f1c40f;
+      color: #fff;
+      transform: scale(1.1);
     }
 
-    /* Адаптивность для мобильных устройств */
+    /* Мобильная версия */
     @media (max-width: 600px) {
       .stone {
         width: 180px;
@@ -95,7 +96,11 @@
       }
 
       .counter {
-        font-size: 32px;
+        font-size: 45px;
+      }
+
+      .game-time {
+        font-size: 20px;
       }
 
       .footer {
@@ -105,38 +110,37 @@
 
     @media (max-width: 400px) {
       .stone {
-        width: 150px;
-        height: 150px;
-        margin-bottom: 10px;
+        width: 160px;
+        height: 160px;
       }
 
       .counter {
-        font-size: 28px;
-        margin-top: 15px;
+        font-size: 40px;
+      }
+
+      .game-time {
+        font-size: 18px;
       }
 
       .footer {
         font-size: 10px;
-        margin-top: 10px;
       }
     }
+
   </style>
 </head>
 <body>
-  <!-- Основной контейнер -->
+
   <div class="container">
-    <!-- Камень -->
     <div class="stone" id="stone"></div>
-    <!-- Счётчик -->
     <div class="counter" id="counter">0</div>
-    <!-- Футер -->
+    <div class="game-time" id="game-time">Время игры: 00:00:00</div>
     <div class="footer">
       By <a href="#">alone_fixer</a>
     </div>
   </div>
 
   <script>
-    // Предотвращаем масштабирование при двойном нажатии
     let lastTouchEnd = 0;
     document.addEventListener('touchend', (event) => {
       const now = new Date().getTime();
@@ -146,30 +150,62 @@
       lastTouchEnd = now;
     });
 
-    // Получение счётчика из localStorage (или 0, если он не установлен)
     let counter = parseInt(localStorage.getItem('counter')) || 0;
-
-    // Элементы счётчика и камня
+    let startTime = parseInt(localStorage.getItem('startTime')) || Date.now(); // Сохраняем время начала
+    let elapsedTime = parseInt(localStorage.getItem('elapsedTime')) || 0; // Время, прошедшее с последнего сеанса
     const counterDisplay = document.getElementById('counter');
     const stone = document.getElementById('stone');
+    const gameTimeDisplay = document.getElementById('game-time');
 
-    // Отображаем текущее значение счётчика
+    // Обновляем счетчик кликов
     counterDisplay.textContent = counter;
 
-    // Обработчик нажатия на камень
+    // Восстанавливаем время игры
+    function updateGameTime() {
+      const totalElapsedTime = elapsedTime + (Date.now() - startTime);
+      const hours = Math.floor(totalElapsedTime / 3600000); // 3600000ms = 1 час
+      const minutes = Math.floor((totalElapsedTime % 3600000) / 60000); // 60000ms = 1 минута
+      const seconds = Math.floor((totalElapsedTime % 60000) / 1000); // 1000ms = 1 секунда
+
+      // Форматируем время в формате ЧЧ:ММ:СС
+      gameTimeDisplay.textContent = `Время игры: ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    // Обновление времени игры каждую секунду
+    setInterval(() => {
+      updateGameTime();
+    }, 1000);
+
     stone.addEventListener('click', () => {
-      counter++; // Увеличиваем счётчик
-      counterDisplay.textContent = counter; // Обновляем отображение
-      localStorage.setItem('counter', counter); // Сохраняем значение
+      counter++;
+      counterDisplay.textContent = counter;
+      localStorage.setItem('counter', counter);
+      counterDisplay.style.transform = 'scale(1.1)';
+      setTimeout(() => {
+        counterDisplay.style.transform = 'scale(1)';
+      }, 200);
     });
 
-    // Обработка для телефонов: включение кликов
     stone.addEventListener('touchstart', (event) => {
-      event.preventDefault(); // Отключаем стандартное поведение
-      counter++; // Увеличиваем счётчик
-      counterDisplay.textContent = counter; // Обновляем отображение
-      localStorage.setItem('counter', counter); // Сохраняем значение
+      event.preventDefault();
+      counter++;
+      counterDisplay.textContent = counter;
+      localStorage.setItem('counter', counter);
+      counterDisplay.style.transform = 'scale(1.1)';
+      setTimeout(() => {
+        counterDisplay.style.transform = 'scale(1)';
+      }, 200);
+    });
+
+    // Сохраняем время начала при выходе из игры
+    window.addEventListener('beforeunload', () => {
+      const currentTime = Date.now();
+      localStorage.setItem('startTime', currentTime); // Сохраняем текущее время начала игры
+      localStorage.setItem('elapsedTime', elapsedTime + (currentTime - startTime)); // Сохраняем прошедшее время
     });
   </script>
+
+  <!-- Добавление скрипта для снежинок -->
+  <script src="https://thecode.media/wp-content/uploads/2019/12/snowfall2020.js"></script>
 </body>
 </html>
