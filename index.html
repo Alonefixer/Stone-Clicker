@@ -33,15 +33,15 @@
 
     /* Камень-кликер */
     .stone {
-      width: 220px;
-      height: 220px;
-      background-image: url('assets/Stone.jpg');
+      width: 200px;
+      height: 200px;
+      background-image: url('assets/Stone.png');
       background-size: cover;
       background-position: center;
       border-radius: 50%;
       box-shadow: 0 20px 60px rgba(255, 255, 255, 0.2), 0 0 25px rgba(255, 255, 255, 0.3);
       cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
       margin-bottom: 30px;
       z-index: 2;
     }
@@ -53,7 +53,7 @@
 
     /* Счётчик кликов */
     .counter {
-      font-size: 60px;
+      font-size: 50px;
       font-weight: bold;
       color: #f1c40f;
       text-shadow: 0px 5px 15px rgba(255, 215, 0, 0.8), 0 0 10px rgba(255, 255, 255, 0.5);
@@ -105,7 +105,7 @@
       }
 
       .counter {
-        font-size: 45px;  /* Уменьшаем размер счётчика для мобильных */
+        font-size: 45px;
       }
 
       .game-time {
@@ -124,7 +124,7 @@
       }
 
       .counter {
-        font-size: 40px;  /* Ещё больше уменьшаем размер счётчика для очень маленьких экранов */
+        font-size: 40px;
       }
 
       .game-time {
@@ -136,121 +136,117 @@
       }
     }
 
-    /* Сообщение о недоступности на ПК */
+    /* Сообщение для пользователей ПК */
     .pc-message {
-      color: white;
-      font-size: 30px;
+      font-size: 32px;
+      color: #ff4747;
       text-align: center;
-      margin-top: 20px;
+      padding: 20px;
+      background-color: rgba(0, 0, 0, 0.8);
+      border-radius: 10px;
     }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <div class="stone" id="stone"></div>
-    <div class="counter" id="counter">0</div>
-    <div class="game-time" id="game-time">Время игры: 00:00:00</div>
-    <div class="footer">
-      By <a href="#">alone_fixer</a>
+    <div id="pcMessage" class="pc-message" style="display:none;">
+      Зайдите с телефона!
+    </div>
+    <div id="content">
+      <div class="stone" id="stone"></div>
+      <div class="counter" id="counter">0</div>
+      <div class="game-time" id="game-time">Время игры: 00:00:00</div>
+      <div class="footer">
+        By <a href="#">alone_fixer</a>
+      </div>
     </div>
   </div>
 
   <script>
     // Проверка на мобильное устройство
     function isMobile() {
-      return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      return /Mobi|Android/i.test(navigator.userAgent);
     }
 
-    // Условие для ПК/ноутбука
+    // Если с ПК или ноутбука, показываем сообщение
     if (!isMobile()) {
       document.body.innerHTML = '<h1 class="pc-message">Зайдите с телефона!</h1>';
-      throw new Error("Игра не доступна на ПК/ноутбуках.");
-    }
+    } else {
+      const counter = parseInt(localStorage.getItem('counter')) || 0;
+      const startTime = parseInt(localStorage.getItem('startTime')) || Date.now(); // Сохраняем время начала
+      const elapsedTime = parseInt(localStorage.getItem('elapsedTime')) || 0; // Время, прошедшее с последнего сеанса
+      const counterDisplay = document.getElementById('counter');
+      const stone = document.getElementById('stone');
+      const gameTimeDisplay = document.getElementById('game-time');
 
-    let counter = parseInt(localStorage.getItem('counter')) || 0;
-    let startTime = parseInt(localStorage.getItem('startTime')) || Date.now(); // Сохраняем время начала
-    let elapsedTime = parseInt(localStorage.getItem('elapsedTime')) || 0; // Время, прошедшее с последнего сеанса
-    const counterDisplay = document.getElementById('counter');
-    const stone = document.getElementById('stone');
-    const gameTimeDisplay = document.getElementById('game-time');
+      // Обновляем счётчик кликов
+      counterDisplay.textContent = counter;
 
-    let isDebouncing = false;
+      // Восстанавливаем время игры
+      function updateGameTime() {
+        const totalElapsedTime = elapsedTime + (Date.now() - startTime);
+        const hours = Math.floor(totalElapsedTime / 3600000); // 3600000ms = 1 час
+        const minutes = Math.floor((totalElapsedTime % 3600000) / 60000); // 60000ms = 1 минута
+        const seconds = Math.floor((totalElapsedTime % 60000) / 1000); // 1000ms = 1 секунда
 
-    // Обновляем счетчик кликов
-    counterDisplay.textContent = counter;
-
-    // Восстанавливаем время игры
-    function updateGameTime() {
-      const totalElapsedTime = elapsedTime + (Date.now() - startTime);
-      const hours = Math.floor(totalElapsedTime / 3600000); // 3600000ms = 1 час
-      const minutes = Math.floor((totalElapsedTime % 3600000) / 60000); // 60000ms = 1 минута
-      const seconds = Math.floor((totalElapsedTime % 60000) / 1000); // 1000ms = 1 секунда
-
-      // Форматируем время в формате ЧЧ:ММ:СС
-      gameTimeDisplay.textContent = `Время игры: ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-    }
-
-    // Обновление времени игры каждую секунду
-    setInterval(() => {
-      updateGameTime();
-    }, 1000);
-
-    // Функция для плавного увеличения счета
-    function animateCounter(start, end) {
-      const duration = 150; // Уменьшаем длительность анимации
-      const steps = 20; // Уменьшаем количество шагов
-      const stepDuration = duration / steps;
-      let currentStep = 0;
-
-      function updateStep() {
-        const currentValue = Math.round(start + (end - start) * (currentStep / steps));
-        counterDisplay.textContent = currentValue;
-        currentStep++;
-
-        if (currentStep <= steps) {
-          requestAnimationFrame(updateStep); // Ожидаем следующего кадра для обновления
-        }
+        // Форматируем время в формате ЧЧ:ММ:СС
+        gameTimeDisplay.textContent = `Время игры: ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
       }
 
-      updateStep();
+      // Обновление времени игры каждую секунду
+      setInterval(() => {
+        updateGameTime();
+      }, 1000);
+
+      // Функция для плавного увеличения счёта
+      function animateCounter(start, end) {
+        const duration = 150; // Длительность анимации в миллисекундах
+        const steps = 30; // Количество шагов
+        const stepDuration = duration / steps;
+        let currentStep = 0;
+
+        function updateStep() {
+          const currentValue = Math.round(start + (end - start) * (currentStep / steps));
+          counterDisplay.textContent = currentValue;
+          currentStep++;
+
+          if (currentStep <= steps) {
+            requestAnimationFrame(updateStep); // Ожидаем следующего кадра для обновления
+          }
+        }
+
+        updateStep();
+      }
+
+      // Функция для обработки кликов без задержек
+      function handleClick() {
+        const oldCounter = counter;
+        counter++; // Увеличиваем счётчик
+        animateCounter(oldCounter, counter); // Плавно увеличиваем счётчик
+
+        localStorage.setItem('counter', counter);
+      }
+
+      // Слушаем клики
+      stone.addEventListener('click', handleClick);
+
+      // Слушаем тачи на мобильных устройствах
+      stone.addEventListener('touchstart', (event) => {
+        event.preventDefault();
+        handleClick();
+      });
+
+      // Сохраняем время начала при выходе из игры
+      window.addEventListener('beforeunload', () => {
+        const currentTime = Date.now();
+        localStorage.setItem('startTime', currentTime); // Сохраняем текущее время начала игры
+        localStorage.setItem('elapsedTime', elapsedTime + (currentTime - startTime)); // Сохраняем прошедшее время
+      });
     }
-
-    // Функция для обработки кликов с дебаунсом
-    function handleClick() {
-      if (isDebouncing) return; // Если в режиме дебаунсинга, игнорируем клик
-
-      isDebouncing = true;
-      const oldCounter = counter;
-      counter++; // Увеличиваем счет
-      animateCounter(oldCounter, counter); // Плавно увеличиваем счет
-
-      localStorage.setItem('counter', counter);
-
-      // Снимаем дебаунсинг через 300 мс
-      setTimeout(() => {
-        isDebouncing = false;
-      }, 300);
-    }
-
-    // Слушаем клики
-    stone.addEventListener('click', handleClick);
-
-    // Слушаем тачи на мобильных устройствах
-    stone.addEventListener('touchstart', (event) => {
-      event.preventDefault();
-      handleClick();
-    });
-
-    // Сохраняем время начала при выходе из игры
-    window.addEventListener('beforeunload', () => {
-      const currentTime = Date.now();
-      localStorage.setItem('startTime', currentTime); // Сохраняем текущее время начала игры
-      localStorage.setItem('elapsedTime', elapsedTime + (currentTime - startTime)); // Сохраняем прошедшее время
-    });
   </script>
 
-  <!-- Добавление скрипта для снежинок -->
   <script src="https://thecode.media/wp-content/uploads/2019/12/snowfall2020.js"></script>
+
 </body>
 </html>
